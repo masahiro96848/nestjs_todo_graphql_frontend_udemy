@@ -20,7 +20,7 @@ export const useAuth = () => {
           setAuthInfo({ checked: true, isAuthenticated: true })
         }
       } else {
-        setAuthInfo({ checked: false, isAuthenticated: false })
+        setAuthInfo({ checked: true, isAuthenticated: false })
       }
     } catch {
       setAuthInfo({ checked: true, isAuthenticated: false })
