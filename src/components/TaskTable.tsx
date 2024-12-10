@@ -6,6 +6,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
 import { Task } from '../../types/task'
+import EditTask from './EditTask'
 
 type Props = {
   tasks: Task[] | undefined
@@ -13,7 +14,7 @@ type Props = {
 }
 
 export default function TaskTable(props: Props) {
-  const { tasks } = props
+  const { tasks, userId } = props
   return (
     <TableContainer component={Paper} sx={{ width: '70%', m: 'auto' }}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -34,7 +35,9 @@ export default function TaskTable(props: Props) {
                 {task.name}
               </TableCell>
               <TableCell align="left">{task.description}</TableCell>
-              <TableCell align="left"></TableCell>
+              <TableCell align="left">
+                <EditTask task={task} userId={userId} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
