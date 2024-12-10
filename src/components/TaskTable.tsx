@@ -5,20 +5,15 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
+import { Task } from '../../types/task'
 
-function createData(name: string, description: string) {
-  return { name, description }
+type Props = {
+  tasks: Task[] | undefined
+  userId: number
 }
 
-const rows = [
-  createData('task1', 'サンプルテストです'),
-  createData('task2', 'サンプルテストです'),
-  createData('task3', 'サンプルテストです'),
-  createData('task4', 'サンプルテストです'),
-  createData('task5', 'サンプルテストです'),
-]
-
-export default function TaskTable() {
+export default function TaskTable(props: Props) {
+  const { tasks } = props
   return (
     <TableContainer component={Paper} sx={{ width: '70%', m: 'auto' }}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -30,15 +25,15 @@ export default function TaskTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {tasks?.map((task) => (
             <TableRow
-              key={row.name}
+              key={task.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {task.name}
               </TableCell>
-              <TableCell align="left">{row.description}</TableCell>
+              <TableCell align="left">{task.description}</TableCell>
               <TableCell align="left"></TableCell>
             </TableRow>
           ))}
