@@ -5,17 +5,65 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import { useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { Task } from '../../types/task'
+import { CREATE_TASK } from '../mutations/taskMutations'
+import { GET_TASKS } from '../queries/taskQueries'
+import { useNavigate } from 'react-router-dom'
 
-export default function AddTask() {
+export default function AddTask({ userId }: { userId: number }) {
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [isInvalidName, setIsInvalidName] = useState(false)
+  const [createTask] = useMutation<{ createTask: Task }>(CREATE_TASK)
+  const navigate = useNavigate()
+
+  const resetState = () => {
+    setName('')
+    setDescription('')
+    setIsInvalidName(false)
+  }
+
+  const handleAddTask = async () => {
+    let canAdd = true
+
+    if (name.length === 0) {
+      canAdd = false
+      setIsInvalidName(true)
+    } else {
+      setIsInvalidName(false)
+    }
+
+    if (canAdd) {
+      const createTaskInput = { name, description, userId }
+      try {
+        await createTask({
+          variables: { createTaskInput },
+          refetchQueries: [{ query: GET_TASKS, variables: { userId } }],
+        })
+        resetState()
+        setOpen(false)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        if (err.message === 'Unauthorized') {
+          localStorage.removeItem('token')
+          alert('トークンの有効期限が切れました。サインイン画面に遷移します。')
+          navigate('/signin')
+          return
+        }
+
+        alert('タスクの登録に失敗しました。')
+      }
+    }
+  }
 
   const handleClickOpen = () => {
     setOpen(true)
   }
 
   const handleClose = () => {
+    resetState()
     setOpen(false)
   }
 
@@ -40,6 +88,8 @@ export default function AddTask() {
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
+            error={isInvalidName}
+            helperText={isInvalidName && 'タスク名を入力してください'}
           />
           <TextField
             autoFocus
@@ -55,7 +105,7 @@ export default function AddTask() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Add</Button>
+          <Button onClick={handleAddTask}>Add</Button>
         </DialogActions>
       </Dialog>
     </div>
