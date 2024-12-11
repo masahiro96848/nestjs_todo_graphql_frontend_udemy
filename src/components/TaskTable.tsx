@@ -40,7 +40,7 @@ export default function TaskTable(props: Props) {
               <TableCell align="left">
                 <Stack spacing={2} direction="row" justifyContent="flex-end">
                   <EditTask task={task} userId={userId} />
-                  <DeleteTask />
+                  <DeleteTask id={task.id} userId={userId} />
                 </Stack>
               </TableCell>
             </TableRow>
